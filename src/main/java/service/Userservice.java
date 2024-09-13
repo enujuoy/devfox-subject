@@ -1,6 +1,7 @@
 package service;
 
 import domain.entity.Comment;
+import domain.entity.Like;
 import domain.entity.User;
 import dto.UserCntDto;
 import dto.UserDto;
@@ -9,7 +10,7 @@ import enum_class.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.relational.core.sql.Like;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
