@@ -19,10 +19,10 @@ public class Comment extends BaseEntity {
     private String body;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;      // 작성자
+    private User user;      // 作成者
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;    // 댓글이 달린 게시판
+    private Board board;    // コメントが付いた掲示板
 
     public void update(String newBody) {
         this.body = newBody;

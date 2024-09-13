@@ -28,50 +28,50 @@ public class MyAccessDeniedHandler implements AccessDeniedHandler {
         }
         String requestURI = request.getRequestURI();
 
-        // 로그인한 유저가 login, join을 시도한 경우
+        // ログインしたユーザーが login または join を試みた場合
         if (requestURI.contains("/users/login") || requestURI.contains("/users/join")) {
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
-            pw.println("<script>alert('이미 로그인 되어있습니다!'); location.href='/';</script>");
+            pw.println("<script>alert('すでにログインしています！'); location.href='/';</script>");
             pw.flush();
         }
-        // 골드게시판은 GOLD, ADMIN만 접근 가능
+        // ゴールド掲示板には、GOLDおよびADMIN権限を持つユーザーのみがアクセス可能
         else if (requestURI.contains("gold")) {
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
-            pw.println("<script>alert('골드 등급 이상의 유저만 접근 가능합니다!'); location.href='/';</script>");
+            pw.println("<script>alert('ゴールドランク以上のユーザーのみアクセス可能です！'); location.href='/';</script>");
             pw.flush();
         } else  if (loginUser != null && loginUser.getUserRole().equals(UserRole.BLACKLIST)){
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
-            pw.println("<script>alert('블랙리스트는 글, 댓글 작성이 불가능합니다.'); location.href='/';</script>");
+            pw.println("<script>alert('ブラックリストに登録されたユーザーは、投稿およびコメントの作成ができません。'); location.href='/';</script>");
             pw.flush();
         }
-        // BRONZE 등급이 자유게시판에 글을 작성하려는 경우
+        // BRONZEランクのユーザーが自由掲示板に投稿しようとした場合
         else if (requestURI.contains("free/write")) {
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
-            pw.println("<script>alert('가입인사 작성 후 작성 가능합니다!'); location.href='/boards/greeting';</script>");
+            pw.println("<script>alert('加入挨拶を投稿した後、投稿が可能です！'); location.href='/boards/greeting';</script>");
             pw.flush();
         }
-        // SILVER 등급 이상이 가입인사를 작성하려는 경우
+        // SILVERランク以上のユーザーが加入挨拶を投稿しようとした場合。
         else if (requestURI.contains("greeting")) {
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
             pw.println("<script>alert('가입인사는 한 번만 작성 가능합니다!'); location.href='/boards/greeting';</script>");
             pw.flush();
         }
-        // ADMIN이 아닌데 관리자 페이지에 접속한 경우
+        // ADMIN権限がないのに管理者ページにアクセスした場合
         else if (requestURI.contains("admin")) {
-            // 메세지 출력 후 홈으로 redirect
+            // メッセージを表示した後、ホームにリダイレクト
             response.setContentType("text/html");
             PrintWriter pw = response.getWriter();
-            pw.println("<script>alert('관리자만 접속 가능합니다!'); location.href='/';</script>");
+            pw.println("<script>alert('管理者のみアクセス可能です！'); location.href='/';</script>");
             pw.flush();
 
         }

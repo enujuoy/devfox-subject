@@ -15,8 +15,8 @@ public class UploadImage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String originalFilename;    // 원본 파일명
-    private String savedFilename;        // 서버에 저장된 파일명
+    private String originalFilename;    // 元のファイル名
+    private String savedFilename;        // サーバーに保存されたファイル名
 
     @OneToOne(mappedBy = "uploadImage", fetch = FetchType.LAZY)
     private Board board;

@@ -21,13 +21,13 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // 세션 유지 시간 = 3600초
+        // セッションの維持時間　＝　3600秒。
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(3600);
 
         User loginUser = userRepository.findByLoginId(authentication.getName()).get();
 
-        // 성공 시 메세지 출력 후 홈 화면으로 redirect
+        // 成功時にメッセージを表示した後、ホーム画面にリダイレクト
         response.setContentType("text/html");
         PrintWriter pw = response.getWriter();
         if (loginUser.getUserRole().equals(UserRole.BLACKLIST)) {

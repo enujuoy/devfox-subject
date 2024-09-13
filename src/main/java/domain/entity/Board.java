@@ -22,18 +22,18 @@ public class Board extends BaseEntity {
     private String body;
 
     @Enumerated(EnumType.STRING)
-    private BoardCategory category; // 카테고리
+    private BoardCategory category; // カテゴリ
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;      // 작성자
+    private User user;      // 作成者
 
     @OneToMany(mappedBy = "board", orphanRemoval = true)
-    private List<Like> likes;       // 좋아요
-    private Integer likeCnt;        // 좋아요 수
+    private List<Like> likes;       // いいね
+    private Integer likeCnt;        // いいねの数
 
     @OneToMany(mappedBy = "board", orphanRemoval = true)
-    private List<Comment> comments; // 댓글
-    private Integer commentCnt;     // 댓글 수
+    private List<Comment> comments; // コメント
+    private Integer commentCnt;     // コメントの数
 
     @OneToOne(fetch = FetchType.LAZY)
     private UploadImage uploadImage;

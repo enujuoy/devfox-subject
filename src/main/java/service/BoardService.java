@@ -31,7 +31,7 @@ public class BoardService {
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
     private final UploadImageService uploadImageService;
-    // private final UploadImageService uploadImageService; => 로컬 디렉토리에 저장할 때 사용 => S3UploadService 대신 사용
+    // private final UploadImageService uploadImageService; => ローカルディレクトリに保存する際に使用 => S3UploadService 代わりに使用
 
     public Page<Board> getBoardList(BoardCategory category, PageRequest pageRequest, String searchType, String keyword) {
         if (searchType != null && keyword != null) {
@@ -51,7 +51,7 @@ public class BoardService {
     public BoardDto getBoard(Long boardId, String category) {
         Optional<Board> optBoard = boardRepository.findById(boardId);
 
-        // id에 해당하는 게시글이 없거나 카테고리가 일치하지 않으면 null return
+        // IDに該当する投稿がないか、カテゴリが一致しない場合は null return
         if (optBoard.isEmpty() || !optBoard.get().getCategory().toString().equalsIgnoreCase(category)) {
             return null;
         }
@@ -80,13 +80,13 @@ public class BoardService {
     public Long editBoard(Long boardId, String category, BoardDto dto) throws IOException {
         Optional<Board> optBoard = boardRepository.findById(boardId);
 
-        // id에 해당하는 게시글이 없거나 카테고리가 일치하지 않으면 null return
+        // IDに該当する投稿がないか、カテゴリが一致しない場合は null return
         if (optBoard.isEmpty() || !optBoard.get().getCategory().toString().equalsIgnoreCase(category)) {
             return null;
         }
 
         Board board = optBoard.get();
-        // 게시글에 이미지가 있었으면 삭제
+        // 投稿にイメージがあれば削除します。
         if (board.getUploadImage() != null) {
             uploadImageService.deleteImage(board.getUploadImage());
             board.setUploadImage(null);
@@ -104,7 +104,7 @@ public class BoardService {
     public Long deleteBoard(Long boardId, String category) throws IOException {
         Optional<Board> optBoard = boardRepository.findById(boardId);
 
-        // id에 해당하는 게시글이 없거나 카테고리가 일치하지 않으면 null return
+        // IDに該当する投稿がないか、カテゴリが一致しない場合は null return
         if (optBoard.isEmpty() || !optBoard.get().getCategory().toString().equalsIgnoreCase(category)) {
             return null;
         }

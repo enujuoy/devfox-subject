@@ -26,27 +26,27 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String loginId; //로그인한때 사용하는 아이디
-    private String password; //비밀번호
+    private String loginId; //ログイン時に使用するID
+    private String password; //パスワード
     private String nickname;
-    private LocalDateTime createdAt; //가입시간
-    private Integer receivedLikeCnt; //유저가 받은 좋아요 개수(본인제외)
+    private LocalDateTime createdAt; //登録時間
+    private Integer receivedLikeCnt; //ユーザーが受け取ったいいね数（本人を除く）
 
     @Enumerated(EnumType.STRING)
-    private UserRole userRole; // 권한
+    private UserRole userRole; // 権限
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Board> boards;     // 작성글
+    private List<Board> boards;     // 投稿した記事
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Like> likes;       // 유저가 누른 좋아요
+    private List<Like> likes;       // ユーザーが押したいいね
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Comment> comments; // 댓글
+    private List<Comment> comments; // コメント
 
     public void rankUp(UserRole userRole, Authentication auth) {
         this.userRole = userRole;
 
-        // 현재 저장되어 있는 Authentication 수정 => 재로그인 하지 않아도 권한 수정 되기 위함
+        // 現在保存されている Authentication 修正 => 再ログインしなくても権限が修正されるため
         List<GrantedAuthority> updatedAuthorities = new ArrayList<>();
         updatedAuthorities.add(new SimpleGrantedAuthority(userRole.name()));
         Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);

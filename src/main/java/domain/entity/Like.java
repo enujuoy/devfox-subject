@@ -22,8 +22,8 @@ public class Like {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;      // 좋아요를 누른 유저
+    private User user;      // いいねを押したユーザー
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;    // 좋아요가 추가된 게시글
+    private Board board;    // いいねが追加された投稿
 }

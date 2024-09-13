@@ -18,7 +18,7 @@ public class UserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByLoginId(username)
                 .orElseThrow(() -> {
-                return new UsernameNotFoundException("해당 유저를 찾을수 없습니다.");
+                return new UsernameNotFoundException("該当ユーザーが見つかりません。");
         });
         return new UserDetail(user);
     }

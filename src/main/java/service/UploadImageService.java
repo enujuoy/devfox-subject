@@ -39,11 +39,11 @@ public class UploadImageService {
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
-        // 원본 파일명 -> 서버에 저장된 파일명 (중복 X)
-        // 파일명이 중복되지 않도록 UUID로 설정 + 확장자 유지
+        // 元のファイル名 -> サーバーに保存されたファイル名（重複なし）
+        // ファイル名が重複しないように、UUIDを使用して設定し、拡張子は維持
         String savedFilename = UUID.randomUUID() + "." + extractExt(originalFilename);
 
-        // 파일 저장
+        // ファイルを保存
         try {
             Path path = Paths.get(fileDir, savedFilename);
             Files.createFile(path);
@@ -65,14 +65,14 @@ public class UploadImageService {
         Files.deleteIfExists(Paths.get(getFullPath(uploadImage.getSavedFilename())));
     }
 
-    // 확장자 추출
+    // 拡張子を抽出
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
     }
 
     public ResponseEntity<UrlResource> downloadImage(Long boardId) throws MalformedURLException {
-        // boardId에 해당하는 게시글이 없으면 null return
+        //boardIdに該当する投稿がない場合は null return
         Board board = boardRepository.findById(boardId).get();
         if (board == null || board.getUploadImage() == null) {
             return null;
@@ -80,11 +80,11 @@ public class UploadImageService {
 
         UrlResource urlResource = new UrlResource("file:" + getFullPath(board.getUploadImage().getSavedFilename()));
 
-        // 업로드 한 파일명이 한글인 경우 아래 작업을 안해주면 한글이 깨질 수 있음
+        // アップロードされたファイル名が韓国語の場合、以下の作業を行わないと文字化けする可能性があります
         String encodedUploadFileName = UriUtils.encode(board.getUploadImage().getOriginalFilename(), StandardCharsets.UTF_8);
         String contentDisposition = "attachment; filename=\"" + encodedUploadFileName + "\"";
 
-        // header에 CONTENT_DISPOSITION 설정을 통해 클릭 시 다운로드 진행
+        // HEADERに CONTENT_DISPOSITION を設定し、クリック時にファイルのダウンロードが進行す
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(urlResource);

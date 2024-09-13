@@ -34,19 +34,19 @@ public class UserDetail implements UserDetails {
     public String getUsername() {
         return user.getLoginId();
     }
-    // 계정이 만료되었는지 (true: 만료 X)
+    // アカウントが有効かどうかを確認 (true: 有効、false: 期限切れ)
     @Override
     public boolean isAccountNonExpired() { return true; }
 
-    // 계정이 잠겼는지 (true : 잠김 X)
+    // アカウントがロックされているかどうかを確認（true: ロックされていない、false: ロックされている）。
     @Override
     public boolean isAccountNonLocked() { return true; }
 
-    // 비밀번호가 만료되었는지 (ture: 만료 X)
+    // パスワードが有効かどうかを確認（true: 有効、false: 期限切れ）。
     @Override
     public boolean isCredentialsNonExpired() { return true; }
 
-    // 계정이 활성화(사용 가능)인지 (true: 활성화)
+    // アカウントがアクティブ（使用可能）かどうかを確認（true: アクティブ、false: 非アクティブ）。
     @Override
     public boolean isEnabled() { return true; }
 

@@ -32,27 +32,27 @@ public class Userservice {
     public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult)
     {
         if (req.getLoginId().isEmpty()) {
-            bindingResult.addError(new FieldError("req", "loginId", "아이디가 비어있습니다."));
+            bindingResult.addError(new FieldError("req", "loginId", "IDが入力されていません。"));
         } else if (req.getLoginId().length() > 10) {
-            bindingResult.addError(new FieldError("req", "loginId", "아이디가 10자가 넘습니다."));
+            bindingResult.addError(new FieldError("req", "loginId", "IDが10文字を超えています。"));
         } else if (userRepository.existsByLoginId(req.getLoginId())) {
-            bindingResult.addError(new FieldError("req", "loginId", "아이디가 중복됩니다."));
+            bindingResult.addError(new FieldError("req", "loginId", "IDが重複しています。"));
         }
 
         if (req.getPassword().isEmpty()) {
-            bindingResult.addError(new FieldError("req", "password", "비밀번호가 비어있습니다."));
+            bindingResult.addError(new FieldError("req", "password", "パスワードが入力されていません。"));
         }
 
         if (!req.getPassword().equals(req.getPasswordCheck())) {
-            bindingResult.addError(new FieldError("req", "passwordCheck", "비밀번호가 일치하지 않습니다."));
+            bindingResult.addError(new FieldError("req", "passwordCheck", "パスワードが一致しません。"));
         }
 
         if (req.getNickname().isEmpty()) {
-            bindingResult.addError(new FieldError("req", "nickname", "닉네임이 비어있습니다."));
+            bindingResult.addError(new FieldError("req", "nickname", "ニックネームが入力されていません。"));
         } else if (req.getNickname().length() > 10) {
-            bindingResult.addError(new FieldError("req", "nickname", "닉네임이 10자가 넘습니다."));
+            bindingResult.addError(new FieldError("req", "nickname", "ニックネームが10文字を超えています。"));
         } else if (userRepository.existsByNickname(req.getNickname())) {
-            bindingResult.addError(new FieldError("req", "nickname", "닉네임이 중복됩니다."));
+            bindingResult.addError(new FieldError("req", "nickname", "ニックネームが重複しています。"));
         }
 
         return bindingResult;
@@ -71,21 +71,21 @@ public class Userservice {
         User loginUser = userRepository.findByLoginId(loginId).get();
 
         if (dto.getNowPassword().isEmpty()) {
-            bindingResult.addError(new FieldError("dto", "nowPassword", "현재 비밀번호가 비어있습니다."));
+            bindingResult.addError(new FieldError("dto", "nowPassword", "現在のパスワードが入力されていません。"));
         } else if (!encoder.matches(dto.getNowPassword(), loginUser.getPassword())) {
-            bindingResult.addError(new FieldError("dto", "nowPassword", "현재 비밀번호가 틀렸습니다."));
+            bindingResult.addError(new FieldError("dto", "nowPassword", "現在のパスワードが間違っています。"));
         }
 
         if (!dto.getNewPassword().equals(dto.getNewPasswordCheck())) {
-            bindingResult.addError(new FieldError("dto", "newPasswordCheck", "비밀번호가 일치하지 않습니다."));
+            bindingResult.addError(new FieldError("dto", "newPasswordCheck", "パスワードが一致しません。"));
         }
 
         if (dto.getNickname().isEmpty()) {
-            bindingResult.addError(new FieldError("dto", "nickname", "닉네임이 비어있습니다."));
+            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが入力されていません。"));
         } else if (dto.getNickname().length() > 10) {
-            bindingResult.addError(new FieldError("dto", "nickname", "닉네임이 10자가 넘습니다."));
+            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが10文字を超えています。"));
         } else if (!dto.getNickname().equals(loginUser.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
-            bindingResult.addError(new FieldError("dto", "nickname", "닉네임이 중복됩니다."));
+            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが重複しています。"));
         }
 
         return bindingResult;
