@@ -1,4 +1,4 @@
-package enum_class;
+package domain.enum_class;
 
 public enum BoardCategory {
     FREE, GREETING, GOLD;

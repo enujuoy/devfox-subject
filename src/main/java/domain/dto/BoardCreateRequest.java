@@ -1,8 +1,8 @@
-package dto;
+package domain.dto;
 
 import domain.entity.Board;
 import domain.entity.User;
-import enum_class.BoardCategory;
+import domain.enum_class.BoardCategory;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 

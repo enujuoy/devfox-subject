@@ -1,7 +1,7 @@
-package dto;
+package domain.dto;
 
 import domain.entity.User;
-import enum_class.UserRole;
+import domain.enum_class.UserRole;
 import lombok.Data;
 
 import java.time.LocalDateTime;

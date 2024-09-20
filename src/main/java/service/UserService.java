@@ -3,10 +3,10 @@ package service;
 import domain.entity.Comment;
 import domain.entity.Like;
 import domain.entity.User;
-import dto.UserCntDto;
-import dto.UserDto;
-import dto.UserJoinRequest;
-import enum_class.UserRole;
+import domain.dto.UserCntDto;
+import domain.dto.UserDto;
+import domain.dto.UserJoinRequest;
+import domain.enum_class.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +23,7 @@ import repository.UserRepository;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
-public class Userservice {
+public class UserService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
@@ -71,21 +71,21 @@ public class Userservice {
         User loginUser = userRepository.findByLoginId(loginId).get();
 
         if (dto.getNowPassword().isEmpty()) {
-            bindingResult.addError(new FieldError("dto", "nowPassword", "現在のパスワードが入力されていません。"));
+            bindingResult.addError(new FieldError("domain/dto", "nowPassword", "現在のパスワードが入力されていません。"));
         } else if (!encoder.matches(dto.getNowPassword(), loginUser.getPassword())) {
-            bindingResult.addError(new FieldError("dto", "nowPassword", "現在のパスワードが間違っています。"));
+            bindingResult.addError(new FieldError("domain/dto", "nowPassword", "現在のパスワードが間違っています。"));
         }
 
         if (!dto.getNewPassword().equals(dto.getNewPasswordCheck())) {
-            bindingResult.addError(new FieldError("dto", "newPasswordCheck", "パスワードが一致しません。"));
+            bindingResult.addError(new FieldError("domain/dto", "newPasswordCheck", "パスワードが一致しません。"));
         }
 
         if (dto.getNickname().isEmpty()) {
-            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが入力されていません。"));
+            bindingResult.addError(new FieldError("domain/dto", "nickname", "ニックネームが入力されていません。"));
         } else if (dto.getNickname().length() > 10) {
-            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが10文字を超えています。"));
+            bindingResult.addError(new FieldError("domain/dto", "nickname", "ニックネームが10文字を超えています。"));
         } else if (!dto.getNickname().equals(loginUser.getNickname()) && userRepository.existsByNickname(dto.getNickname())) {
-            bindingResult.addError(new FieldError("dto", "nickname", "ニックネームが重複しています。"));
+            bindingResult.addError(new FieldError("domain/dto", "nickname", "ニックネームが重複しています。"));
         }
 
         return bindingResult;

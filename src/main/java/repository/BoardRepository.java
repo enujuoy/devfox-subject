@@ -1,8 +1,8 @@
 package repository;
 
 import domain.entity.Board;
-import enum_class.BoardCategory;
-import enum_class.UserRole;
+import domain.enum_class.BoardCategory;
+import domain.enum_class.UserRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;

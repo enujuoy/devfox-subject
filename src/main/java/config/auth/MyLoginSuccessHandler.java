@@ -2,7 +2,7 @@ package config.auth;
 
 
 import domain.entity.User;
-import enum_class.UserRole;
+import domain.enum_class.UserRole;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

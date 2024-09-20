@@ -1,7 +1,7 @@
 package domain.entity;
 
 
-import enum_class.UserRole;
+import domain.enum_class.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

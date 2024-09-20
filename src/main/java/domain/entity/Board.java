@@ -1,7 +1,7 @@
 package domain.entity;
 
-import dto.BoardDto;
-import enum_class.BoardCategory;
+import domain.dto.BoardDto;
+import domain.enum_class.BoardCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

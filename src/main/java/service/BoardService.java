@@ -1,11 +1,11 @@
 package service;
 
 import domain.entity.*;
-import dto.BoardCntDto;
-import dto.BoardCreateRequest;
-import dto.BoardDto;
-import enum_class.BoardCategory;
-import enum_class.UserRole;
+import domain.dto.BoardCntDto;
+import domain.dto.BoardCreateRequest;
+import domain.dto.BoardDto;
+import domain.enum_class.BoardCategory;
+import domain.enum_class.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
