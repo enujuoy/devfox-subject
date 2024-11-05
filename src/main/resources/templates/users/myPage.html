@@ -1,35 +1,59 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head" />
-<body>
-<div th:replace="fragments/header.html :: header ('user')"/>
-<div class="row">
-  <form class="offset-4 col-4 form-group user-form" th:method="post" th:action="@{/users/login}" th:object="${userLoginRequest}" align="left">
-    <div>
-      <label th:for="loginId">아이디</label><br/>
-      <input type="text" th:field="*{loginId}" placeholder="아이디를 입력해주세요."/>
-    </div>
-    <br/>
-    <div>
-      <label th:for="password">비밀번호</label><br/>
-      <input type="password" th:field="*{password}" placeholder="비밀번호를 입력해주세요."/>
-    </div>
-    <br/>
-    <div id="login-fail" class="error-div" align="center" hidden>아이디 또는 비밀번호가 일치하지 않습니다.</div>
-    <br/>
-    <div align="center">
-      <button class="btn user-btn" type="submit">로그인</button>
-    </div>
-  </form>
-</div>
-
-<script th:inline="javascript">
-  window.onload = function () {
-    if(location.href.includes("fail")) {
-      document.getElementById("login-fail").removeAttribute("hidden");
-    }
+<style>
+  .select-btn,.selected-btn{
+    width: 200px;
   }
-</script>
 
+</style>
+<body>
+<div th:replace="fragments/header.html :: header ('myPage')"></div>
+<div th:replace="fragments/myPageHeader.html :: myPageHeader"></div>
+
+<br/><br/>
+<div class="row">
+  <div class="offset-2 col-1">
+    <h5>全体: [[${boards.size}]]件</h5>
+  </div>
+  <div class="col-6" align="center">
+    <button th:if="${category == 'board'}" class="btn selected-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/board'">作成した投稿</button>
+    <button th:unless="${category == 'board'}" class="btn select-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/board'">作成した投稿</button>
+    <button th:if="${category == 'like'}" class="btn selected-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/like'">いいねした投稿</button>
+    <button th:unless="${category == 'like'}" class="btn select-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/like'">いいねした投稿</button>
+    <button th:if="${category == 'comment'}"  class="btn selected-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/comment'">コメントした投稿</button>
+    <button th:unless="${category == 'comment'}"  class="btn select-btn" style="margin: 0px 30px;" onclick="location.href='/users/myPage/comment'">コメントした投稿</button>
+  </div>
+</div>
+<br/>
+<div class="row">
+  <div class="offset-2 col-8">
+    <table class="table list-table table-hover text-center">
+      <thead style="background-color: #A5F1E9">
+      <tr>
+        <th style="width: 16%">掲示板</th>
+        <th style="width: 20%">作成者</th>
+        <th style="width: 35%">タイトル</th>
+        <th style="width: 7%">いいね</th>
+        <th style="width: 7%">コメント</th>
+        <th style="width: 15%">作成日</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="board: ${boards}"
+          th:onclick="|location.href='@{/boards/{category}/{boardId} (category=${#strings.toLowerCase(board.category)}, boardId=${board.id})}'|">
+        <td th:if="${#strings.toLowerCase(board.category) == 'greeting'}" style="width: 16%">入会挨拶</td>
+        <td th:if="${#strings.toLowerCase(board.category) == 'free'}" style="width: 16%">自由掲示板</td>
+        <td th:if="${#strings.toLowerCase(board.category) == 'gold'}" style="width: 16%">ゴールド掲示板</td>
+        <td style="width: 20%" th:text="${board.user.nickname}"></td>
+        <td style="width: 35%" th:text="${board.title}"></td>
+        <td style="width: 7%" th:text="${board.likeCnt}"></td>
+        <td style="width: 7%" th:text="${board.commentCnt}"></td>
+        <td style="width: 15%" th:text="${#temporals.format(board.createdAt, 'yy/MM/dd HH:mm')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>

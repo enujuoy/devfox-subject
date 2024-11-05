@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head" />
 <body>
-<div th:replace="fragments/header.html :: header ('user')"/>
+<div th:replace="fragments/header.html :: header ('user')"></div>
 <div class="row">
   <form class="offset-4 col-4 form-group user-form" id="delete-form" th:method="post" th:action="@{/users/delete}" th:object="${userDto}" align="left">
     <div>
-      <label th:for="nowPassword">현재 비밀번호</label><br/>
-      <input type="password" th:field="*{nowPassword}" placeholder="현재 비밀번호를 입력해주세요."/>
+      <label th:for="nowPassword">現在のパスワード</label><br/>
+      <input type="password" th:field="*{nowPassword}" placeholder="現在のパスワードを入力してください。"/>
     </div>
     <br/>
     <div align="center">
-      <button class="btn del-btn" type="button" onclick="clickDelete()">회원 탈퇴</button>
+      <button class="btn del-btn" type="button" onclick="clickDelete()">退会</button>
     </div>
   </form>
 </div>
 <script th:inline="javascript">
   function clickDelete() {
-    if (confirm("탈퇴하면 작성한 글, 댓글, 좋아요가 모두 삭제되고 계정을 복구할 수 없습니다.\n정말 탈퇴하시겠습니까?") == true) {
+    if (confirm("退会すると作成した投稿、コメント、いいねがすべて削除され、アカウントを復元することはできません。\n本当に退会しますか？") == true) {
       document.getElementById('delete-form').submit();
     }
   }

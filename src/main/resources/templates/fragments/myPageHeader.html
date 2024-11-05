@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="jp" xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="myPageHeader" class="row">
   <div class="offset-3 col-6">
     <div class="card">
       <div class="card-body">
         <div style="float: left">
-          <h4>Id: [[${user.loginId}]]</h4>
-          <h4>닉네임: [[${user.nickname}]]</h4>
-          <h4>등급: [[${user.userRole}]]</h4>
-          <h4>받은 좋아요: [[${user.receivedLikeCnt}]]개</h4>
+          <h4>ID: [[${user.loginId}]]</h4>
+          <h4>ニックネーム: [[${user.nickname}]]</h4>
+          <h4>ランク: [[${user.userRole}]]</h4>
+          <h4>もらったいいね: [[${user.receivedLikeCnt}]]件</h4>
         </div>
         <div style="float: right">
-          <button class="btn edit-btn" onclick="location.href='/users/edit'">정보 수정</button>
+          <button class="btn edit-btn" onclick="location.href='/users/edit'">情報修正</button>
           <br/><br/>
-          <button class="btn del-btn" onclick="location.href='/users/delete'">회원 탈퇴</button>
+          <button class="btn del-btn" onclick="location.href='/users/delete'">退会</button>
         </div>
       </div>
     </div>

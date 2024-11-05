@@ -1,33 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/header.html :: head" />
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header.html :: head"></head>
 <body>
-<div th:replace="fragments/header.html :: header (${category})"/>
-<div class="row" style=" margin-bottom: 30px">
+<div th:replace="fragments/header.html :: header (${category})"></div>
+
+<!-- data-* 속성으로 Thymeleaf 변수를 HTML 요소에 할당 -->
+<div class="row" style="margin-bottom: 30px" th:attr="data-category=${category}" data-now-page="[[${boards.getNumber() + 1}]]" data-total-page="[[${boards.getTotalPages()}]]">
   <div class="offset-1 col-2">
-    <h5 style="height: 40px; display: flex; align-items: center; margin: 0px; justify-content: right">전체: [[${boards.getTotalElements()}]]개</h5>
+    <h5 style="height: 40px; display: flex; align-items: center; margin: 0; justify-content: right">全体: [[${boards.getTotalElements()}]]件</h5>
   </div>
   <div class="col-6" align="center">
     <form class="form-group" style="height: 40px;" th:object="${boardSearchRequest}" th:method="get"
           th:action="|@{/boards/{category} (category=${category}, sortType=*{sortType}, searchType=*{searchType}, keyword=*{keyword})}|">
-      <select th:field="*{sortType}" style="height: 40px;">
-        <option th:value="date">최신순</option>
-        <option th:value="like">좋아요순</option>
-        <option th:value="comment">댓글순</option>
-      </select>
-      <select th:field="*{searchType}" style="height: 40px;">
-        <option th:value="title">제목</option>
-        <option th:value="nickname">작성자</option>
-      </select>
-      <input type="text" th:field="*{keyword}" placeholder="검색 키워드를 입력해주세요" style="height: 100%; width: 60%;">
-      <button class="btn search-btn" type="submit">검색</button>
+      <label>
+        <select th:field="*{sortType}" style="height: 40px;">
+          <option th:value="date">最新順</option>
+          <option th:value="like">いいね順</option>
+          <option th:value="comment">コメント順</option>
+        </select>
+      </label>
+      <label>
+        <select th:field="*{searchType}" style="height: 40px;">
+          <option th:value="title">タイトル</option>
+          <option th:value="nickname">作成者</option>
+        </select>
+      </label>
+      <label>
+        <input type="text" th:field="*{keyword}" placeholder="検索キーワードを入力してください" style="height: 100%; width: 60%;">
+      </label>
+      <button class="btn search-btn" type="submit">検索</button>
     </form>
   </div>
   <div class="col-1" align="right">
-    <button  sec:authorize="!hasAuthority('ADMIN')" class="btn post-btn" type="button"
-             th:onclick="|location.href='@{/boards/{category}/write (category=${category})}'|">글 작성</button>
-    <button  sec:authorize="hasAuthority('ADMIN')" class="btn post-btn" type="button"
-             th:onclick="|location.href='@{/boards/{category}/write (category=${category})}'|">공지 작성</button>
+    <button sec:authorize="!hasAuthority('ADMIN')" class="btn post-btn" type="button"
+            th:onclick="|location.href='@{/boards/{category}/write (category=${category})}'|">投稿作成</button>
+    <button sec:authorize="hasAuthority('ADMIN')" class="btn post-btn" type="button"
+            th:onclick="|location.href='@{/boards/{category}/write (category=${category})}'|">お知らせ作成</button>
   </div>
 </div>
 <div class="row">
@@ -35,11 +43,11 @@
     <table class="table list-table table-hover text-center">
       <thead style="background-color: #A5F1E9">
       <tr>
-        <th style="width: 20%">작성자</th>
-        <th style="width: 45%">제목</th>
-        <th style="width: 10%">좋아요</th>
-        <th style="width: 10%">댓글</th>
-        <th style="width: 15%">작성일</th>
+        <th style="width: 20%">作成者</th>
+        <th style="width: 45%">タイトル</th>
+        <th style="width: 10%">いいね</th>
+        <th style="width: 10%">コメント</th>
+        <th style="width: 15%">作成日</th>
       </tr>
       </thead>
       <tbody>
@@ -49,7 +57,7 @@
         <td style="width: 20%" th:text="${notice.user.nickname}"/>
         <td style="width: 45%" th:text="${notice.title}"/>
         <td style="width: 10%" th:text="${notice.likeCnt}"/>
-        <td style="width: 10%" th:text="${notice.commentCnt}"/>
+        <td style="width: 10%; resize: none;" th:text="${notice.commentCnt}"/>
         <td style="width: 15%" th:text="${#temporals.format(notice.createdAt, 'yy/MM/dd HH:mm')}"/>
       </tr>
       <tr th:each="board: ${boards}"
@@ -57,22 +65,25 @@
         <td style="width: 20%" th:text="${board.user.nickname}"/>
         <td style="width: 45%" th:text="${board.title}"/>
         <td style="width: 10%" th:text="${board.likeCnt}"/>
-        <td style="width: 10%" th:text="${board.commentCnt}"/>
+        <td style="width: 10%; resize: none;" th:text="${board.commentCnt}"/>
         <td style="width: 15%" th:text="${#temporals.format(board.createdAt, 'yy/MM/dd HH:mm')}"/>
       </tr>
       </tbody>
     </table>
   </div>
-  <ul id="paging-ul" class="pagination justify-content-center"></ul>
 </div>
+
 <script th:inline="javascript">
   window.onload = function () {
-    let nowPage = [[${boards.getNumber()}]] + 1;    // 현재 페이지
-    let totalPage = [[${boards.getTotalPages()}]];  // 전체 페이지 수
+    // HTML 데이터 속성에서 값을 가져옵니다
+    const rowElement = document.querySelector('.row');
+    const category = rowElement.getAttribute('data-category');
+    const nowPage = parseInt(rowElement.getAttribute('data-now-page'));
+    const totalPage = parseInt(rowElement.getAttribute('data-total-page'));
 
     let firstPage;  // 화면에 출력될 첫 페이지
-    for (let i = nowPage ; i >= 1 ; i --) {
-      if(i % 5 == 1) {
+    for (let i = nowPage; i >= 1; i--) {
+      if (i % 5 === 1) {
         firstPage = i;
         break;
       }
@@ -90,40 +101,43 @@
 
     // HTML 생성
     let pageHtml = "";
-    pageHtml += "<li><a class='page-link' href='" + makeUrl(1) +  "'>&laquo;</a></li>";
+    pageHtml += "<li><a class='page-link' href='" + makeUrl(1) + "'>&laquo;</a></li>";
     if (firstPage != 1) {
-      pageHtml += "<li><a class='page-link' href='" + makeUrl(firstPage - 1) +  "'>&lsaquo;</a></li>";
+      pageHtml += "<li><a class='page-link' href='" + makeUrl(firstPage - 1) + "'>&lsaquo;</a></li>";
     }
 
     for (let i = firstPage; i <= lastPage; i++) {
-      if (i == nowPage) {
-        pageHtml += "<li class='page-item active'><a class= 'page-link'>" + i + "</a></li>";
+      if (i === nowPage) {
+        pageHtml += "<li class='page-item active'><a class='page-link'>" + i + "</a></li>";
       } else {
-        pageHtml += "<li class='page-item'><a class= 'page-link' href='" + makeUrl(i) + "'>" + i + "</a></li>";
+        pageHtml += "<li class='page-item'><a class='page-link' href='" + makeUrl(i) + "'>" + i + "</a></li>";
       }
     }
 
     if (nextButton) {
-      pageHtml += "<li><a class='page-link' href='" + makeUrl(lastPage + 1) +  "'>&rsaquo;</a></li>";
+      pageHtml += "<li><a class='page-link' href='" + makeUrl(lastPage + 1) + "'>&rsaquo;</a></li>";
     }
-    pageHtml += "<li><a class='page-link' href='" + makeUrl(totalPage) +  "'>&raquo;</a></li>";
+    pageHtml += "<li><a class='page-link' href='" + makeUrl(totalPage) + "'>&raquo;</a></li>";
 
-    $("#paging-ul").html(pageHtml);
+    document.getElementById("paging-ul").innerHTML = pageHtml;
   }
 
   function makeUrl(page) {
-    let category = [[${category}]];
+    // category 값을 HTML의 data-category 속성에서 가져옵니다.
+    const rowElement = document.querySelector('.row');
+    const category = rowElement.getAttribute('data-category');
+
     let url = "/boards/" + category + "?page=" + page;
 
-    // 검색 했으면 다음 URL에도 추가
-    let sortType = [[${boardSearchRequest.sortType}]];
-    let searchType = [[${boardSearchRequest.searchType}]];
-    let keyword = [[${boardSearchRequest.keyword}]];
+    // 검색 했으면 URL에 추가
+    let sortType = /*[[${boardSearchRequest.sortType}]]*/ '';
+    let searchType = /*[[${boardSearchRequest.searchType}]]*/ '';
+    let keyword = /*[[${boardSearchRequest.keyword}]]*/ '';
 
-    if (sortType != null) {
+    if (sortType !== '') {
       url += "&sortType=" + sortType;
     }
-    if (searchType != null) {
+    if (searchType !== '') {
       url += "&searchType=" + searchType + "&keyword=" + keyword;
     }
 
