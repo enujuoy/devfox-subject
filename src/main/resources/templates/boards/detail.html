@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="fragments/header.html :: head"></head>
+<head th:replace="fragments/header.html :: head" />
 <body>
-<div th:replace="fragments/header.html :: header (${category})"></div>
-
-<!-- Thymeleaf 변수들을 data- 속성으로 설정 -->
-<div class="row" th:attr="data-category=${category}" th:attr="data-board-id=${boardDto.id}">
+<div th:replace="fragments/header.html :: header (${category})"/>
+<div class="row">
     <div class="offset-3 col-6">
         <form class="form-group" th:object="${boardDto}" th:method="post"
-              th:action="|@{/boards/{category}/{boardId}/edit (category=${category}, boardId=${boardDto.id})}|" enctype="multipart/form-data">
+              th:action="|@{/boards/{category}/{boardId}/edit (category = ${category}, boardId=${boardDto.id})}|" enctype="multipart/form-data">
             <div style="float: right;" align="right">
                 <div th:text="'作成日 : ' + ${#temporals.format(boardDto.createdAt, 'yy/MM/dd HH:mm')}"></div>
                 <div th:text="'最終更新日 : ' + ${#temporals.format(boardDto.lastModifiedAt, 'yy/MM/dd HH:mm')}"></div>
@@ -45,7 +43,7 @@
             <br/>
             <div>
                 <label th:for="body" style="font-size: large">内容 : </label>
-                <textarea rows="10" style="width: 100%;" th:field="*{body}" readonly></textarea>
+                <textarea rows="10" style="width: 100%;" th:field="*{body}" readonly/>
             </div>
             <br/>
             <div id="image-div2" hidden>
@@ -60,27 +58,27 @@
             </div>
             <br/>
             <div id="div2" align="center" hidden>
-                <button class="btn edit-btn" type="submit">編集完了</button>
+                <button class="btn edit-btn" type="submit">修正完了</button>
             </div>
         </form>
         <div id="div1" th:if="${loginUserLoginId == boardDto.userLoginId}" align="center">
-            <button class="btn edit-btn" onclick="clickEdit()">編集</button>
-            <button th:if="${category != 'greeting'}" class="btn del-btn" onclick="clickDelete()">削除</button>
+            <button class="btn edit-btn" onclick="clickEdit()">修正</button>
+            <button class="btn del-btn" onclick="clickDelete()">削除</button>
         </div>
         <div th:unless="${loginUserLoginId == boardDto.userLoginId}" sec:authorize="hasAuthority('ADMIN')" align="center">
-            <button th:if="${category != 'greeting'}" class="btn del-btn" onclick="clickDelete()">削除</button>
+            <button class="btn del-btn" onclick="clickDelete()">削除</button>
         </div>
         <br/><hr/>
         <form class="form-group" th:object="${commentCreateRequest}"  th:method="post" th:action="|@{/comments/{boardId} (boardId=${boardDto.id})}|">
             <div style="text-align: right">
                 <!-- ログイン時 -->
                 <div sec:authorize="isAuthenticated()">
-                    <textarea rows="3" th:field="*{body}" placeholder="コメントを入力してください" style="width: 100%"></textarea>
+                    <textarea rows="3" th:field="*{body}" placeholder="コメントを入力してください" style="width: 100%"/>
                     <button class="btn post-btn" type="submit">コメント追加</button>
                 </div>
                 <!-- 未ログイン時 -->
                 <div sec:authorize="isAnonymous()">
-                    <textarea rows="3" th:field="*{body}" placeholder="ログインしたユーザーのみコメントできます" style="width: 100%" readonly></textarea>
+                    <textarea rows="3" th:field="*{body}" placeholder="ログインしたユーザーのみコメントを投稿できます" style="width: 100%" readonly/>
                 </div>
             </div>
         </form>
@@ -97,7 +95,7 @@
                             <h6 class="card-subtitle mb-2 text-muted" th:text="'作成日 : ' + ${#temporals.format(comment.createdAt, 'yy/MM/dd HH:mm')}"></h6>
                         </div>
                         <div th:if="${comment.user.loginId == loginUserLoginId}" style="float: right;">
-                            <button type="submit" class="btn edit-btn" style="width: fit-content; margin: 0px;">編集</button>
+                            <button type="submit" class="btn edit-btn" style="width: fit-content; margin: 0px;">修正</button>
                             <button type="button" class="btn del-btn" style="width: fit-content; margin: 0px;"
                                     th:onclick="|location.href='@{/comments/{commentId}/delete (commentId=${comment.id})}'|">削除</button>
                         </div>
@@ -108,8 +106,8 @@
                     </div>
 
                     <div th:if="${comment.user.loginId == loginUserLoginId}">
-                        <textarea rows="3" class="card-text" th:text="${comment.body}" id="body" name="body"
-                                  style="margin-bottom: 10px; width: 100%"></textarea>
+                            <textarea rows="3" class="card-text" th:text="${comment.body}" id="body" name="body"
+                                      style="margin-bottom: 10px; width: 100%"></textarea>
                     </div>
                     <div th:unless="${comment.user.loginId == loginUserLoginId}">
                         <textarea rows="3" class="card-text" th:text="${comment.body}" style="margin-bottom: 10px; width: 100%" readonly></textarea>
@@ -124,7 +122,7 @@
 
 <script th:inline="javascript">
     function clickEdit() {
-        if (confirm("画像付きの投稿を編集すると、既存の画像が削除されます。\n編集しますか？")) {
+        if (confirm("画像付きの投稿を修正すると、既存の画像が削除されます。\n修正しますか？") == true) {
             document.getElementById("div1").style.display = 'none';
             if (document.getElementById("image-div1") != null) {
                 document.getElementById("image-div1").style.display = 'none';
@@ -135,26 +133,22 @@
             document.getElementById("body").removeAttribute("readonly");
         }
     }
+    const category = /*[[${category}]]*/ 'default';
+    const boardId = /*[[${boardDto.id}]]*/ '0';
 
     function clickDelete() {
-        const category = document.querySelector('div[data-category]').getAttribute('data-category');
-        const boardId = document.querySelector('div[data-board-id]').getAttribute('data-board-id');
-
-        if (confirm("この投稿を削除しますか？")) {
-            location.href = `/boards/${category}/${boardId}/delete`;
+        if (confirm("この投稿を削除しますか？") == true) {
+            location.href = "/boards/" + category + "/" + boardId + "/delete";
         }
     }
 
     function deleteLike() {
-        const boardId = document.querySelector('div[data-board-id]').getAttribute('data-board-id');
-
-        if (confirm("「いいね」を取り消しますか？")) {
-            location.href = `/likes/delete/${boardId}`;
+        if (confirm("「いいね」を取り消しますか？") == true) {
+            location.href = "/likes/delete/" + boardId;
         }
     }
-
     function askLogin() {
-        if (confirm("ログインが必要な操作です。\nログインしますか？")) {
+        if (confirm("ログインが必要です。\nログインしますか？") == true) {
             location.href = "/users/login";
         }
     }
@@ -184,8 +178,8 @@
         let agent = navigator.userAgent.toLowerCase();
 
         // ブラウザがIEの場合
-        if ((navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1)) {
-            $("#newImage").replaceWith($("#newImage").clone(true));
+        if ( (navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || (agent.indexOf("msie") != -1) ){
+            $("#newImage").replaceWith( $("#newImage").clone(true) );
         } else {
             $("#newImage").val("");
         }

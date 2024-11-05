@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header.html :: head" />
+<head th:replace="fragments/header.html :: head"></head>
 <body>
 <div th:replace="fragments/header.html :: header ('admin')"></div>
 <div class="row">
@@ -27,75 +27,57 @@
             </thead>
             <tbody>
             <tr th:each="user: ${users}"
-                th:onclick="|location.href='@{/users/admin/{userId} (userId=${user.id}, page=${users.getNumber()}+1, keyword=${keyword})}'|">
-                <th style="width: 5%" th:text="${user.id}"/>
-                <th style="width: 15%" th:text="${user.loginId}"/>
-                <th style="width: 15%" th:text="${user.nickname}"/>
-                <th style="width: 10%" th:text="${user.userRole}"/>
-                <th style="width: 15%" th:text="${#temporals.format(user.createdAt, 'yy/MM/dd HH:mm')}"/>
-                <th style="width: 10%" th:text="${user.boards.size}"/>
-                <th style="width: 10%" th:text="${user.comments.size}"/>
-                <th style="width: 10%" th:text="${user.likes.size}"/>
-                <th style="width: 10%" th:text="${user.receivedLikeCnt}"/>
+                th:onclick="|location.href='@{/users/admin/{userId} (userId=${user.id}, page=${users.number + 1}, keyword=${keyword})}'|">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.loginId}"></td>
+                <td th:text="${user.nickname}"></td>
+                <td th:text="${user.userRole}"></td>
+                <td th:text="${#temporals.format(user.createdAt, 'yy/MM/dd HH:mm')}"></td>
+                <td th:text="${user.boards.size}"></td>
+                <td th:text="${user.comments.size}"></td>
+                <td th:text="${user.likes.size}"></td>
+                <td th:text="${user.receivedLikeCnt}"></td>
             </tr>
             </tbody>
         </table>
     </div>
     <ul id="paging-ul" class="pagination justify-content-center"></ul>
 </div>
+
 <script th:inline="javascript">
-    window.onload = function () {
-        let nowPage = [[${users.getNumber()}]] + 1;    // 現在のページ
-        let totalPage = [[${users.getTotalPages()}]];  // 全ページ数
+    document.addEventListener("DOMContentLoaded", function () {
+        let nowPage = [[${users.number}]] + 1;    // 現在のページ
+        let totalPage = [[${users.totalPages}]];  // 全ページ数
 
-        let firstPage;  // 表示される最初のページ
-        for (let i = nowPage ; i >= 1 ; i --) {
-            if(i % 5 == 1) {
-                firstPage = i;
-                break;
-            }
-        }
+        let firstPage = Math.floor((nowPage - 1) / 5) * 5 + 1;
+        let lastPage = Math.min(firstPage + 4, totalPage);
+        let nextButton = lastPage < totalPage;
 
-        let lastPage;   // 表示される最後のページ
-        let nextButton; // 次のボタン表示
-        if (firstPage + 4 >= totalPage) {
-            lastPage = totalPage;
-            nextButton = false;
-        } else {
-            lastPage = firstPage + 4;
-            nextButton = true;
-        }
-
-        // HTML生成
-        let pageHtml = "";
-        pageHtml += "<li><a class='page-link' href='" + makeUrl(1) +  "'>&laquo;</a></li>";
-        if (firstPage != 1) {
-            pageHtml += "<li><a class='page-link' href='" + makeUrl(firstPage - 1) +  "'>&lsaquo;</a></li>";
+        let pageHtml = "<li class='page-item'><a class='page-link' href='" + makeUrl(1) +  "'>&laquo;</a></li>";
+        if (firstPage > 1) {
+            pageHtml += "<li class='page-item'><a class='page-link' href='" + makeUrl(firstPage - 1) +  "'>&lsaquo;</a></li>";
         }
 
         for (let i = firstPage; i <= lastPage; i++) {
-            if (i == nowPage) {
-                pageHtml += "<li class='page-item active'><a class= 'page-link'>" + i + "</a></li>";
+            if (i === nowPage) {
+                pageHtml += "<li class='page-item active'><a class='page-link'>" + i + "</a></li>";
             } else {
-                pageHtml += "<li class='page-item'><a class= 'page-link' href='" + makeUrl(i) + "'>" + i + "</a></li>";
+                pageHtml += "<li class='page-item'><a class='page-link' href='" + makeUrl(i) + "'>" + i + "</a></li>";
             }
         }
 
         if (nextButton) {
-            pageHtml += "<li><a class='page-link' href='" + makeUrl(lastPage + 1) +  "'>&rsaquo;</a></li>";
+            pageHtml += "<li class='page-item'><a class='page-link' href='" + makeUrl(lastPage + 1) +  "'>&rsaquo;</a></li>";
         }
-        pageHtml += "<li><a class='page-link' href='" + makeUrl(totalPage) +  "'>&raquo;</a></li>";
+        pageHtml += "<li class='page-item'><a class='page-link' href='" + makeUrl(totalPage) +  "'>&raquo;</a></li>";
 
-        $("#paging-ul").html(pageHtml);
-    }
+        document.getElementById("paging-ul").innerHTML = pageHtml;
+    });
 
     function makeUrl(page) {
-        let url = "/users/admin?page=" + page;
-
-        // 検索していた場合、URLに追加
-        let keyword = [[${keyword}]];
-        url += "&keyword=" + keyword;
-
+        let keyword = /*[[${keyword}]]*/ '';
+        let url = `/users/admin?page=${page}`;
+        if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
         return url;
     }
 </script>

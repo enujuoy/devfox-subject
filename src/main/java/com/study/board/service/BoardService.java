@@ -70,7 +70,7 @@ public class BoardService {
             savedBoard.setUploadImage(uploadImage);
         }
 
-        if (category.equals(BoardCategory.GREETING)) {
+        if (category.equals(BoardCategory.GREETING)&& !loginUser.getUserRole().equals(UserRole.ADMIN)) {
             loginUser.rankUp(UserRole.SILVER, auth);
         }
         return savedBoard.getId();
@@ -102,21 +102,32 @@ public class BoardService {
     }
 
     public Long deleteBoard(Long boardId, String category) throws IOException {
-        Optional<Board> optBoard = boardRepository.findById(boardId);
+        // Optional<Board>를 사용하여 게시물 조회
+        Board board = boardRepository.findById(boardId)
+                .orElse(null);
 
-        // IDに該当する投稿がないか、カテゴリが一致しない場合は null return
-        if (optBoard.isEmpty() || !optBoard.get().getCategory().toString().equalsIgnoreCase(category)) {
+        // ID에 해당하는 게시물이 없거나 카테고리가 일치하지 않을 경우 null 반환
+        if (board == null || !board.getCategory().toString().equalsIgnoreCase(category)) {
             return null;
         }
 
-        User boardUser = optBoard.get().getUser();
-        boardUser.likeChange(boardUser.getReceivedLikeCnt() - optBoard.get().getLikeCnt());
-        if (optBoard.get().getUser() != null) {
-            uploadImageService.deleteImage(optBoard.get().getUploadImage());
+        // 작성자의 좋아요 수 업데이트
+        User boardUser = board.getUser();
+        if (boardUser != null) {
+            boardUser.likeChange(boardUser.getReceivedLikeCnt() - board.getLikeCnt());
         }
-        boardRepository.deleteById(boardId);
+
+        // 이미지가 존재하는 경우 이미지 삭제
+        if (board.getUploadImage() != null) {
+            uploadImageService.deleteImage(board.getUploadImage());
+        }
+
+        // 게시물 삭제
+        boardRepository.delete(board);
+
         return boardId;
     }
+
 
     public String getCategory(Long boardId) {
         Board board = boardRepository.findById(boardId).get();

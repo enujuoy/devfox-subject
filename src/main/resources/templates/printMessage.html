@@ -7,10 +7,18 @@
 <body>
 <script th:inline="javascript">
   window.onload = function () {
-    if([[${message}]] != null) {
-      alert([[${message}]])
+    /* 메시지가 있을 경우 alert로 표시 */
+    const message = /*[[${message}]]*/ null;
+    const nextUrl = /*[[${nextUrl}]]*/ "/";
+
+    if (message) {
+      alert(message);
     }
-    window.location.href = [[${nextUrl}]]
+
+    // nextUrl로 이동
+    if (nextUrl) {
+      window.location.href = nextUrl;
+    }
   }
 </script>
 </body>

@@ -4,10 +4,12 @@
 <body>
 <div th:replace="fragments/header.html :: header (${category})"></div>
 
-<!-- data-* 속성으로 Thymeleaf 변수를 HTML 요소에 할당 -->
-<div class="row" style="margin-bottom: 30px" th:attr="data-category=${category}" data-now-page="[[${boards.getNumber() + 1}]]" data-total-page="[[${boards.getTotalPages()}]]">
+<div class="row" style="margin-bottom: 30px"
+     th:attr="data-category=${category}, data-now-page=${boards.number + 1}, data-total-page=${boards.totalPages}">
   <div class="offset-1 col-2">
-    <h5 style="height: 40px; display: flex; align-items: center; margin: 0; justify-content: right">全体: [[${boards.getTotalElements()}]]件</h5>
+    <h5 style="height: 40px; display: flex; align-items: center; margin: 0; justify-content: right">
+      全体: [[${boards.totalElements}]]件
+    </h5>
   </div>
   <div class="col-6" align="center">
     <form class="form-group" style="height: 40px;" th:object="${boardSearchRequest}" th:method="get"
@@ -38,6 +40,7 @@
             th:onclick="|location.href='@{/boards/{category}/write (category=${category})}'|">お知らせ作成</button>
   </div>
 </div>
+
 <div class="row">
   <div class="offset-2 col-8">
     <table class="table list-table table-hover text-center">
@@ -54,55 +57,43 @@
       <tr th:each="notice: ${notices}"
           th:onclick="|location.href='@{/boards/{category}/{boardId} (category=${category}, boardId=${notice.id})}'|"
           class="notice-tr">
-        <td style="width: 20%" th:text="${notice.user.nickname}"/>
-        <td style="width: 45%" th:text="${notice.title}"/>
-        <td style="width: 10%" th:text="${notice.likeCnt}"/>
-        <td style="width: 10%; resize: none;" th:text="${notice.commentCnt}"/>
-        <td style="width: 15%" th:text="${#temporals.format(notice.createdAt, 'yy/MM/dd HH:mm')}"/>
+        <td th:text="${notice.user.nickname}"/>
+        <td th:text="${notice.title}"/>
+        <td th:text="${notice.likeCnt}"/>
+        <td th:text="${notice.commentCnt}"/>
+        <td th:text="${#temporals.format(notice.createdAt, 'yy/MM/dd HH:mm')}"/>
       </tr>
       <tr th:each="board: ${boards}"
           th:onclick="|location.href='@{/boards/{category}/{boardId} (category=${category}, boardId=${board.id})}'|">
-        <td style="width: 20%" th:text="${board.user.nickname}"/>
-        <td style="width: 45%" th:text="${board.title}"/>
-        <td style="width: 10%" th:text="${board.likeCnt}"/>
-        <td style="width: 10%; resize: none;" th:text="${board.commentCnt}"/>
-        <td style="width: 15%" th:text="${#temporals.format(board.createdAt, 'yy/MM/dd HH:mm')}"/>
+        <td th:text="${board.user.nickname}"/>
+        <td th:text="${board.title}"/>
+        <td th:text="${board.likeCnt}"/>
+        <td th:text="${board.commentCnt}"/>
+        <td th:text="${#temporals.format(board.createdAt, 'yy/MM/dd HH:mm')}"/>
       </tr>
       </tbody>
     </table>
   </div>
 </div>
 
+<!-- Pagination Navigation -->
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center" id="paging-ul"></ul>
+</nav>
+
 <script th:inline="javascript">
   window.onload = function () {
-    // HTML 데이터 속성에서 값을 가져옵니다
     const rowElement = document.querySelector('.row');
     const category = rowElement.getAttribute('data-category');
     const nowPage = parseInt(rowElement.getAttribute('data-now-page'));
     const totalPage = parseInt(rowElement.getAttribute('data-total-page'));
 
-    let firstPage;  // 화면에 출력될 첫 페이지
-    for (let i = nowPage; i >= 1; i--) {
-      if (i % 5 === 1) {
-        firstPage = i;
-        break;
-      }
-    }
+    let firstPage = Math.floor((nowPage - 1) / 5) * 5 + 1;
+    let lastPage = Math.min(firstPage + 4, totalPage);
+    let nextButton = lastPage < totalPage;
 
-    let lastPage;   // 화면에 출력될 마지막 페이지
-    let nextButton; // 다음 버튼 출력 여부
-    if (firstPage + 4 >= totalPage) {
-      lastPage = totalPage;
-      nextButton = false;
-    } else {
-      lastPage = firstPage + 4;
-      nextButton = true;
-    }
-
-    // HTML 생성
-    let pageHtml = "";
-    pageHtml += "<li><a class='page-link' href='" + makeUrl(1) + "'>&laquo;</a></li>";
-    if (firstPage != 1) {
+    let pageHtml = "<li><a class='page-link' href='" + makeUrl(1) + "'>&laquo;</a></li>";
+    if (firstPage > 1) {
       pageHtml += "<li><a class='page-link' href='" + makeUrl(firstPage - 1) + "'>&lsaquo;</a></li>";
     }
 
@@ -123,23 +114,16 @@
   }
 
   function makeUrl(page) {
-    // category 값을 HTML의 data-category 속성에서 가져옵니다.
     const rowElement = document.querySelector('.row');
     const category = rowElement.getAttribute('data-category');
-
     let url = "/boards/" + category + "?page=" + page;
 
-    // 검색 했으면 URL에 추가
     let sortType = /*[[${boardSearchRequest.sortType}]]*/ '';
     let searchType = /*[[${boardSearchRequest.searchType}]]*/ '';
     let keyword = /*[[${boardSearchRequest.keyword}]]*/ '';
 
-    if (sortType !== '') {
-      url += "&sortType=" + sortType;
-    }
-    if (searchType !== '') {
-      url += "&searchType=" + searchType + "&keyword=" + keyword;
-    }
+    if (sortType) url += "&sortType=" + sortType;
+    if (searchType) url += "&searchType=" + searchType + "&keyword=" + keyword;
 
     return url;
   }

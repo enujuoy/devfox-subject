@@ -140,20 +140,27 @@ public class BoardController {
 
     @GetMapping("/{category}/{boardId}/delete")
     public String boardDelete(@PathVariable String category, @PathVariable Long boardId, Model model) throws IOException {
-        if (category.equals("greeting")) {
+        // "greeting" 카테고리는 삭제할 수 없도록 안내 메시지 반환
+        if ("greeting".equalsIgnoreCase(category)) {
             model.addAttribute("message", "入会挨拶は削除できません。");
             model.addAttribute("nextUrl", "/boards/greeting");
             return "printMessage";
         }
 
+        // 게시물 삭제 시도
         Long deletedBoardId = boardService.deleteBoard(boardId, category);
 
-        // idに該当する投稿がない、またはカテゴリが一致しない場合はエラーメッセージを表示
-        // 投稿が存在して削除した場合は削除完了メッセージを表示
-        model.addAttribute("message", deletedBoardId == null ? "該当する投稿が存在しません。" : deletedBoardId + "番の投稿が削除されました。");
+        // 게시물이 존재하지 않거나 삭제할 수 없는 경우 에러 메시지, 삭제된 경우 성공 메시지
+        if (deletedBoardId == null) {
+            model.addAttribute("message", "該当する投稿が存在しません。");
+        } else {
+            model.addAttribute("message", deletedBoardId + "番の投稿が削除されました。");
+        }
+
         model.addAttribute("nextUrl", "/boards/" + category);
         return "printMessage";
     }
+
 
     @ResponseBody
     @GetMapping("/images/{filename}")
