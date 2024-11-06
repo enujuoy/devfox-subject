@@ -101,28 +101,31 @@ public class BoardService {
         return board.getId();
     }
 
+    @Transactional
     public Long deleteBoard(Long boardId, String category) throws IOException {
-        // Optional<Board>를 사용하여 게시물 조회
+        // Optional<Board>を使用して投稿を取得
         Board board = boardRepository.findById(boardId)
                 .orElse(null);
 
-        // ID에 해당하는 게시물이 없거나 카테고리가 일치하지 않을 경우 null 반환
+        // IDに該当する投稿がないか、カテゴリが一致しない場合は null を返す
         if (board == null || !board.getCategory().toString().equalsIgnoreCase(category)) {
             return null;
         }
 
-        // 작성자의 좋아요 수 업데이트
+        // 投稿者の「いいね」数を更新
         User boardUser = board.getUser();
         if (boardUser != null) {
             boardUser.likeChange(boardUser.getReceivedLikeCnt() - board.getLikeCnt());
         }
 
-        // 이미지가 존재하는 경우 이미지 삭제
+        // 画像が存在する場合、関係を解除してから画像を削除
         if (board.getUploadImage() != null) {
-            uploadImageService.deleteImage(board.getUploadImage());
+            UploadImage uploadImage = board.getUploadImage();
+            board.setUploadImage(null); // 関係を解除
+            uploadImageService.deleteImage(uploadImage); // 画像を削除
         }
 
-        // 게시물 삭제
+        // 投稿を削除
         boardRepository.delete(board);
 
         return boardId;
